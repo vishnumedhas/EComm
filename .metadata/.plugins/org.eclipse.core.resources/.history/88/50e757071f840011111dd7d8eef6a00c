@@ -1,0 +1,64 @@
+package com.ecomm.user.service.impl;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ecomm.user.dto.UserDto;
+import com.ecomm.user.entity.User;
+import com.ecomm.user.repository.UserRepository;
+import com.ecomm.user.request.LoginRequest;
+import com.ecomm.user.request.RegisterRequest;
+import com.ecomm.user.request.UpdateRequest;
+import com.ecomm.user.service.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private UserRepository urepo;
+	
+	@Override
+	public UserDto register(RegisterRequest request) {
+		User u=mapper.map(request, User.class);
+		u=urepo.save(u);
+		UserDto dto=mapper.map(u, UserDto.class);
+		return dto;
+	}
+
+	@Override
+	public UserDto login(LoginRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserDto getById(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserDto> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateUser(Integer userId, UpdateRequest request) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteById(Integer userId) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

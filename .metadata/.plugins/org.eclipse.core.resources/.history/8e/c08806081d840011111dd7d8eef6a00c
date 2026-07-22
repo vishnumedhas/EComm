@@ -1,0 +1,9 @@
+package com.ecomm.user.request;
+
+public class UpdateRequest {
+
+	private String email;
+	
+	private String password;
+
+}

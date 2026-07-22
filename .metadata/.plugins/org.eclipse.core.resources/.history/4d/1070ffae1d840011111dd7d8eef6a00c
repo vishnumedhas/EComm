@@ -1,0 +1,21 @@
+package com.ecomm.user.service;
+
+import java.awt.List;
+
+import com.ecomm.user.dto.UserDto;
+import com.ecomm.user.request.LoginRequest;
+import com.ecomm.user.request.RegisterRequest;
+
+public interface UserService {
+
+	UserDto register(RegisterRequest request);
+	
+	UserDto login(LoginRequest request);
+	
+	UserDto getById(Integer userId);
+	
+	java.util.List<UserDto> getAll();
+	
+	
+	
+}

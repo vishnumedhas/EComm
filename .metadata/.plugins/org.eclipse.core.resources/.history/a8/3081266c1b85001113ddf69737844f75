@@ -1,0 +1,181 @@
+package com.ecomm.user.service.impl;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.ecomm.exception.UserException;
+import com.ecomm.user.dto.UserDto;
+import com.ecomm.user.entity.User;
+import com.ecomm.user.repository.UserRepository;
+import com.ecomm.user.request.LoginRequest;
+import com.ecomm.user.request.RegisterRequest;
+import com.ecomm.user.request.UpdateRequest;
+import com.ecomm.user.service.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private UserRepository urepo;
+	
+	@Override
+	public UserDto register(RegisterRequest request) {
+		
+		User alreadyExists=urepo.findByEmail(request.getEmail()).orElse(null);
+		
+		if(alreadyExists!=null) {
+			throw new RuntimeException("User already exists");
+		}
+		
+		User u=mapper.map(request, User.class);
+		u=urepo.save(u);
+		UserDto dto=mapper.map(u, UserDto.class);
+		return dto;
+	}
+
+	@Override
+	public UserDto login(LoginRequest request) {
+		// TODO Auto-generated method stub
+	User alreadyExists=	urepo.findByEmail(request.getEmail()).orElse(null);
+	
+	if(alreadyExists==null) {
+		throw new UserException("User not found!",HttpStatus.NOT_FOUND );
+	}
+	
+	if(!request.getPassword().equals(alreadyExists.getPassword())) {
+		throw new UserException("Incorrect Password!", HttpStatus.BAD_REQUEST);
+	}
+	
+	UserDto dto=mapper.map(alreadyExists, UserDto.class);
+	
+		return dto;
+	}
+
+	@Override
+	public UserDto getById(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserDto> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateUser(Integer userId, UpdateRequest request) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteById(Integer userId) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+
+
+/*
+ * package com.ecommerce.service.impl;
+
+import java.util.List;
+
+import javax.management.RuntimeErrorException;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.ecommerce.dto.UserDto;
+import com.ecommerce.entity.User;
+import com.ecommerce.exception.UserException;
+import com.ecommerce.repository.UserRepository;
+import com.ecommerce.request.LoginRequest;
+import com.ecommerce.request.RegisterRequest;
+import com.ecommerce.request.UpdateRequest;
+import com.ecommerce.service.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+    @Autowired
+	private ModelMapper mapper;
+    
+    @Autowired
+    private UserRepository urepo;
+	@Override
+	public UserDto register(RegisterRequest request) {
+		User alreadyExists=urepo.findByMail(request.getEmail()).orElse(null);
+		
+		if(alreadyExists!=null) {
+			throw new UserException("User already exists!", HttpStatus.BAD_REQUEST);
+		}
+		
+		
+		User u=mapper.map(request,User.class);
+		u=urepo.save(u);
+		UserDto dto=mapper.map(u, UserDto.class);
+		return dto;
+		
+	}
+
+	@Override
+	public UserDto login(LoginRequest request) {
+		User alreadyExists=urepo.findByMail(request.getEmail()).orElse(null);
+		if(alreadyExists==null) {
+			throw new UserException("User not found!", HttpStatus.NOT_FOUND);
+		}
+		
+		if(!request.getPassword().equals(alreadyExists.getPassword())) {
+			throw new UserException("Incorrect Password!", HttpStatus.BAD_REQUEST);
+		}
+		
+		UserDto dto=mapper.map(alreadyExists, UserDto.class);
+		
+		return dto;
+	}
+
+	@Override
+	public UserDto getById(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserDto> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateUser(Integer userId, UpdateRequest request) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteUser(Integer userId) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * */

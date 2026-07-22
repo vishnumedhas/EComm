@@ -34,13 +34,21 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest request){
-		return null;
+		 UserDto dto = uservice.login(request);
+
+		    return new ResponseEntity<>(
+		            new ApiResponse<>("Login Successful", dto, HttpStatus.OK),
+		            HttpStatus.OK);
 	}
 	
 	@GetMapping("/get/{userId}")
 	public ResponseEntity<?> getUserById(@PathVariable Integer userId){
 		
-		return null;
+		 UserDto dto = uservice.getById(userId);
+
+		    return new ResponseEntity<>(
+		            new ApiResponse<>("User fetched successfully", dto, HttpStatus.OK),
+		            HttpStatus.OK);
 	}
 	
 	@GetMapping("/get")

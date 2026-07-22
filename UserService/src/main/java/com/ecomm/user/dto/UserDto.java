@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import lombok.Data;
 
-@Data
+@Data				
 public class UserDto {
 
 	private Integer userId;

@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.ecomm.exception.UserException;
 import com.ecomm.user.dto.UserDto;
 import com.ecomm.user.entity.User;
 import com.ecomm.user.repository.UserRepository;
@@ -41,13 +43,33 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto login(LoginRequest request) {
 		// TODO Auto-generated method stub
-		return null;
+	User alreadyExists=	urepo.findByEmail(request.getEmail()).orElse(null);
+	
+	if(alreadyExists==null) {
+		throw new UserException("User not found!",HttpStatus.NOT_FOUND );
+	}
+	
+	if(!request.getPassword().equals(alreadyExists.getPassword())) {
+		throw new UserException("Incorrect Password!", HttpStatus.BAD_REQUEST);
+	}
+	
+	UserDto dto=mapper.map(alreadyExists, UserDto.class);
+	
+		return dto;
 	}
 
 	@Override
 	public UserDto getById(Integer userId) {
 		// TODO Auto-generated method stub
-		return null;
+		User user = urepo.findById(userId).orElse(null);
+
+	    if(user == null) {
+	        throw new UserException("User not found!", HttpStatus.NOT_FOUND);
+	    }
+
+	    UserDto dto = mapper.map(user, UserDto.class);
+
+	    return dto;
 	}
 
 	@Override
@@ -69,3 +91,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 }
+
+
+
+
+
+
