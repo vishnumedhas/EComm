@@ -1,0 +1,5 @@
+package com.ecomm.user.service;
+
+public interface Profileservice {
+
+}

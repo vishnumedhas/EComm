@@ -8,13 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ecomm.exception.UserException;
+import com.ecomm.user.dto.ProfileDto;
 import com.ecomm.user.dto.UserDto;
+import com.ecomm.user.entity.Profile;
 import com.ecomm.user.entity.User;
 import com.ecomm.user.repository.UserRepository;
 import com.ecomm.user.request.LoginRequest;
 import com.ecomm.user.request.RegisterRequest;
 import com.ecomm.user.request.UpdateRequest;
+import com.ecomm.user.service.ProfileService;
 import com.ecomm.user.service.UserService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,18 +30,30 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository urepo;
 	
+	@Autowired
+	private ProfileService pservice;
+	
+	
+	@Transactional
 	@Override
 	public UserDto register(RegisterRequest request) {
 		
 		User alreadyExists=urepo.findByEmail(request.getEmail()).orElse(null);
 		
 		if(alreadyExists!=null) {
-			throw new RuntimeException("User already exists");
+			throw new UserException("User already exists",HttpStatus.BAD_REQUEST);
 		}
 		
+		
 		User u=mapper.map(request, User.class);
+		
+		Profile p=mapper.map(request, Profile.class);
 		u=urepo.save(u);
+		p.setUser(u);
+		p=pservice.addProfile(p);
+		ProfileDto pdto=mapper.map(p, ProfileDto.class);
 		UserDto dto=mapper.map(u, UserDto.class);
+		dto.setDto(pdto);
 		return dto;
 	}
 

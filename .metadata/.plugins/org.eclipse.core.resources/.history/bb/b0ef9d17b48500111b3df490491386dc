@@ -1,0 +1,5 @@
+package com.ecomm.user.repository;
+
+public interface Profilerepo {
+
+}

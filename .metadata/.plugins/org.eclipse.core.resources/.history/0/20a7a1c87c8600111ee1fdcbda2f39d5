@@ -1,0 +1,16 @@
+package com.ecomm.user.service;
+
+import java.util.List;
+
+import com.ecomm.user.entity.Profile;
+
+public interface Profileservice {
+ 
+	Profile addProfile(Profile profile);
+	void updateProfile(Integer profileId,Profile profile);
+	void deleteProfile(Integer profileId);
+	Profile findById(Integer profileId);
+	List<Profile>findAll();
+	
+	
+}

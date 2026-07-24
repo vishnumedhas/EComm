@@ -1,0 +1,71 @@
+package com.ecomm.user.service.impl;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.ecomm.exception.UserException;
+import com.ecomm.user.entity.Profile;
+import com.ecomm.user.repository.Profilerepo;
+import com.ecomm.user.service.ProfileService;
+
+@Service
+public class ProfileServiceImpl  implements ProfileService{
+
+	@Autowired
+	private Profilerepo prepo;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	
+	@Override
+	public Profile addProfile(Profile profile) {
+		// TODO Auto-generated method stub
+		Profile p = mapper.map(profile, Profile.class);
+		p=prepo.save(p);
+		return p;
+	}
+
+	@Override
+	public void updateProfile(Integer profileId,Profile profile) {
+		// TODO Auto-generated method stub
+		Profile p=prepo.findById(profileId).orElse(null);
+		if(p==null) {
+			throw new UserException("Profile not found!", HttpStatus.NOT_FOUND);
+		}
+		else {
+			prepo.save(profile);
+		}
+		
+	}
+
+	@Override
+	public void deleteProfile(Integer profileId) {
+		// TODO Auto-generated method stub
+		Profile p =prepo.findById(profileId).orElse(null);
+		if(p==null) {
+			throw new UserException("User not found!", HttpStatus.NOT_FOUND);
+		}
+		else {
+			prepo.deleteById(profileId);
+		}
+	}
+
+	@Override
+	public Profile findById(Integer profileId) {
+		// TODO Auto-generated method stub
+		Profile p =prepo.findById(profileId).orElse(null);
+		return p;
+	}
+
+	@Override
+	public List<Profile> findAll() {
+		
+		return prepo.findAll();
+	}
+
+}

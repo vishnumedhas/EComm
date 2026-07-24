@@ -1,0 +1,10 @@
+package com.ecomm.user.service;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ecomm.user.entity.Profile;
+
+public interface Profileservice extends JpaRepository<Profile, Integer>{
+
+	
+}

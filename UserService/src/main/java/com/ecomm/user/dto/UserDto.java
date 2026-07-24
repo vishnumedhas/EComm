@@ -13,4 +13,5 @@ public class UserDto {
 	
 	private LocalDateTime createdAt;
 
+	private ProfileDto dto;
 }
