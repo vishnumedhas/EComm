@@ -10,7 +10,6 @@ public interface ProfileService {
 	void updateProfile(Integer profileId,Profile profile);
 	void deleteProfile(Integer profileId);
 	Profile findById(Integer profileId);
-	List<Profile>findAll();
-	
+	Profile getProfileByUserId(Integer userId);
 	
 }

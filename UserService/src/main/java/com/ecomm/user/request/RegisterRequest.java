@@ -2,6 +2,8 @@ package com.ecomm.user.request;
 
 import java.time.LocalDate;
 
+import com.ecomm.user.enums.RoleType;
+
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -14,4 +16,5 @@ public class RegisterRequest {
 	private String lastName;
 	private String phone;
 	private LocalDate dob;
+	private RoleType roleName;
 }

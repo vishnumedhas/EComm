@@ -1,9 +1,0 @@
-package com.ecomm.user.request;
-
-public class UpdateRequest {
-
-	public UpdateRequest() {
-		// TODO Auto-generated constructor stub
-	}
-
-}

@@ -3,3 +3,5 @@
 1784798574722	Delete element
 1784800592568	Rename type 'Profileservice'
 1784801647513	Rename type 'Profilerepo'
+1784885409604	Rename package 'com.ecomm.exception'
+1784885751774	Rename type 'UserException'

@@ -1,5 +1,0 @@
-package com.ecomm.user.response;
-
-public class ApiResponse<?> {
-
-}

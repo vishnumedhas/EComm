@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.ecomm.exception.UserException;
 import com.ecomm.user.entity.Profile;
+import com.ecomm.user.exception.AppException;
 import com.ecomm.user.repository.ProfileRepository;
 import com.ecomm.user.service.ProfileService;
 
@@ -34,7 +34,7 @@ public class ProfileServiceImpl  implements ProfileService{
 		// TODO Auto-generated method stub
 		Profile p=prepo.findById(profileId).orElse(null);
 		if(p==null) {
-			throw new UserException("Profile not found!", HttpStatus.NOT_FOUND);
+			throw new AppException("Profile not found!", HttpStatus.NOT_FOUND);
 		}
 		else {
 			prepo.save(profile);
@@ -47,7 +47,7 @@ public class ProfileServiceImpl  implements ProfileService{
 		// TODO Auto-generated method stub
 		Profile p =prepo.findById(profileId).orElse(null);
 		if(p==null) {
-			throw new UserException("User not found!", HttpStatus.NOT_FOUND);
+			throw new AppException("User not found!", HttpStatus.NOT_FOUND);
 		}
 		else {
 			prepo.deleteById(profileId);
@@ -61,10 +61,11 @@ public class ProfileServiceImpl  implements ProfileService{
 		return p;
 	}
 
+
 	@Override
-	public List<Profile> findAll() {
-		
-		return prepo.findAll();
+	public Profile getProfileByUserId(Integer userId) {
+		Profile p=prepo.findByUserUserId(userId).orElseThrow(()->new AppException("Profile Not Found!", HttpStatus.NOT_FOUND));
+		return p;
 	}
 
 }
