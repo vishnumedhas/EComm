@@ -6,10 +6,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import com.ecomm.user.dto.ProfileDto;
 import com.ecomm.user.entity.Profile;
 import com.ecomm.user.exception.AppException;
 import com.ecomm.user.repository.ProfileRepository;
+import com.ecomm.user.request.ProfileUpdateRequest;
+import com.ecomm.user.response.CloudinaryResponse;
+import com.ecomm.user.service.CloudinaryService;
 import com.ecomm.user.service.ProfileService;
 
 @Service
@@ -21,51 +27,50 @@ public class ProfileServiceImpl  implements ProfileService{
 	@Autowired
 	private ModelMapper mapper;
 	
-	
+	@Autowired
+	private CloudinaryService cservice;
+
 	@Override
 	public Profile addProfile(Profile profile) {
-		// TODO Auto-generated method stub
-		profile=prepo.save(profile);
-		return profile;
+		
+		return prepo.save(profile);
 	}
 
 	@Override
-	public void updateProfile(Integer profileId,Profile profile) {
-		// TODO Auto-generated method stub
-		Profile p=prepo.findById(profileId).orElse(null);
-		if(p==null) {
-			throw new AppException("Profile not found!", HttpStatus.NOT_FOUND);
+	public ProfileDto updateProfile(Integer profileId, ProfileUpdateRequest request,MultipartFile image) {
+		Profile p=prepo.findById(profileId).orElseThrow(()->new AppException("USer not found", HttpStatus.NOT_FOUND));
+		mapper.map(request, p);   //request has first name,last name so we are setting to the profile
+		if(image!=null&& !image.isEmpty()) {
+			if(p.getImageUrl()!=null&&p.getPublicUrl()!=null) {
+				cservice.deleteImage(p.getPublicUrl());
+			}
+			CloudinaryResponse response=cservice.uploadImage(image);
+			p.setImageUrl(response.getImageUrl());
+			p.setPublicUrl(response.getPublicUrl());
 		}
-		else {
-			prepo.save(profile);
-		}
-		
+		prepo.save(p);
+		return mapper.map(p, ProfileDto.class);
 	}
 
 	@Override
 	public void deleteProfile(Integer profileId) {
-		// TODO Auto-generated method stub
-		Profile p =prepo.findById(profileId).orElse(null);
-		if(p==null) {
-			throw new AppException("User not found!", HttpStatus.NOT_FOUND);
-		}
-		else {
-			prepo.deleteById(profileId);
-		}
+		prepo.findById(profileId).orElseThrow(()->new AppException("User not found", HttpStatus.NOT_FOUND));
+		prepo.deleteById(profileId);
+
 	}
 
 	@Override
-	public Profile findById(Integer profileId) {
-		// TODO Auto-generated method stub
-		Profile p =prepo.findById(profileId).orElse(null);
-		return p;
+	public ProfileDto getByProfileId(Integer profileId) {
+		Profile p=prepo.findById(profileId).orElseThrow(()->new AppException("User not found", HttpStatus.NOT_FOUND));
+		ProfileDto pdto=mapper.map(p, ProfileDto.class);
+		return pdto;
 	}
 
-
 	@Override
-	public Profile getProfileByUserId(Integer userId) {
-		Profile p=prepo.findByUserUserId(userId).orElseThrow(()->new AppException("Profile Not Found!", HttpStatus.NOT_FOUND));
-		return p;
+	public ProfileDto getProfileByUserId(Integer userId) {
+		Profile p=prepo.findByUserUserId(userId).orElseThrow(()->new AppException("User not found", HttpStatus.NOT_FOUND));
+		ProfileDto pdto=mapper.map(p, ProfileDto.class);
+		return pdto;
 	}
 
 }

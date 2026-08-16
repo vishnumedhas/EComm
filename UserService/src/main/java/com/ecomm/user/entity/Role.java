@@ -29,6 +29,8 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer roleId;
 	
+	//"This Java enum needs to be stored in the database. Decide how the enum value should be represented."
+	//This tells Hibernate to store the enum name as text.
 	@Enumerated(EnumType.STRING)
 	private RoleType roleName=RoleType.CUSTOMER;
 	

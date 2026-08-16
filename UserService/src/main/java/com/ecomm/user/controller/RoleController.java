@@ -23,9 +23,9 @@ public class RoleController {
 	private RoleService rservice;
 
 	@PostMapping("/add")
-	public ResponseEntity<?> addRole(@RequestBody AddRoleRequest request){
-		RoleDto dto=rservice.addRole(request.getRoleName());
-		return ResponseEntity.ok(new ApiResponse<>("Role added successfully!",dto,HttpStatus.OK));
+	public ResponseEntity<?>addRole(@RequestBody AddRoleRequest request){
+		RoleDto rdto=rservice.addRole(request.getRoleName());
+		return ResponseEntity.ok(new ApiResponse<>("Role Added Successfully",rdto,HttpStatus.OK));
 	}
 	
 }

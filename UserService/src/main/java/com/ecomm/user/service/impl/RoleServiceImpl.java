@@ -20,29 +20,30 @@ public class RoleServiceImpl implements RoleService {
 	
 	@Autowired
 	private ModelMapper mapper;
+	
 	@Override
 	public RoleDto addRole(RoleType roleName) {
 		Role r=rrepo.findByRoleName(roleName).orElse(null);
 		if(r!=null) {
-			throw new AppException("Role already exists!", HttpStatus.CONFLICT);
+			throw new AppException("Role already exists",HttpStatus.CONFLICT);
 		}
 		r=new Role();
 		r.setRoleName(roleName);
 		r=rrepo.save(r);
-		RoleDto dto=mapper.map(r, RoleDto.class);
-		return dto;
-	}
-
-	@Override
-	public RoleDto getRoleByRoleName(RoleType roleName) {
-		Role r=rrepo.findByRoleName(roleName).orElseThrow(()->new AppException("Role Not found!", HttpStatus.NOT_FOUND));
 		return mapper.map(r, RoleDto.class);
 	}
 
 	@Override
+	public RoleDto getRoleByRoleName(RoleType roleName) {
+		Role r=rrepo.findByRoleName(roleName).orElseThrow(()->new AppException("Role Not Found", HttpStatus.NOT_FOUND));
+		RoleDto rdto=mapper.map(r, RoleDto.class);
+		return rdto;
+	}
+
+	@Override
 	public RoleDto getRoleById(Integer roleId) {
-		// TODO Auto-generated method stub
-		return null;
+		Role r=rrepo.findById(roleId).orElseThrow(()->new AppException("Role Not Found", HttpStatus.NOT_FOUND));
+		return mapper.map(r, RoleDto.class);
 	}
 
 }

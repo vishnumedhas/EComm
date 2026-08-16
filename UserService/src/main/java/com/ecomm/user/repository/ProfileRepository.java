@@ -11,7 +11,7 @@ import com.ecomm.user.entity.Profile;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Integer>{
 	
-	Optional<Profile> findByUserUserId(Integer userId);
+	Optional<Profile>findByUserUserId(Integer userId);
 	
 
 }

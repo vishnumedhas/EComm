@@ -1,6 +1,7 @@
 package com.ecomm.user.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import com.ecomm.user.exception.AppException;
 import com.ecomm.user.repository.UserRepository;
 import com.ecomm.user.request.LoginRequest;
 import com.ecomm.user.request.RegisterRequest;
-import com.ecomm.user.request.UpdateRequest;
+import com.ecomm.user.service.MailSender;
 import com.ecomm.user.service.ProfileService;
 import com.ecomm.user.service.RoleService;
 import com.ecomm.user.service.UserService;
@@ -29,10 +30,10 @@ import jakarta.transaction.Transactional;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private ModelMapper mapper;
+	private UserRepository urepo;
 	
 	@Autowired
-	private UserRepository urepo;
+	private ModelMapper mapper;
 	
 	@Autowired
 	private ProfileService pservice;
@@ -40,83 +41,100 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleService rservice;
 	
+	@Autowired
+	private MailSender mservice;
 	
 	@Transactional
 	@Override
 	public UserDto register(RegisterRequest request) {
 		
-		User alreadyExists=urepo.findByEmail(request.getEmail()).orElse(null);
-		
-		if(alreadyExists!=null) {
-			throw new AppException("User already exists",HttpStatus.BAD_REQUEST);
+	RoleDto existinRole=rservice.getRoleByRoleName(request.getRoleName());
+	if(existinRole==null) {
+		throw new AppException("Role not found", HttpStatus.NOT_FOUND);
+	}
+    User alreadyExists=urepo.findByEmail(request.getEmail()).orElse(null);
+    if(alreadyExists!=null) {
+    	throw new AppException("User already exists", HttpStatus.BAD_REQUEST);
+    }
+    
+    User u=mapper.map(request, User.class);
+    Role r=mapper.map(existinRole, Role.class);
+    u.setRole(r);
+    u=urepo.save(u);
+    Profile p=mapper.map(request, Profile.class);
+    p.setUser(u);
+    p=pservice.addProfile(p);
+    
+    mservice.sendmail(request.getEmail(),"Welcome to E-commerce", request.getFirstName()+" "+"your account was created successfully");
+    
+    UserDto dto=mapper.map(u, UserDto.class);
+   ProfileDto pdto= mapper.map(p, ProfileDto.class);
+   dto.setProfileDto(pdto);
+   dto.setRoleDto(existinRole);
+		return dto;
+	}
+
+	@Override
+	public UserDto login(LoginRequest request) {
+	User alreadyExists=urepo.findByEmail(request.getEmail()).orElse(null);
+	if(alreadyExists==null) {
+		throw new AppException("User not found!", HttpStatus.NOT_FOUND);
+	}
+	if(!alreadyExists.getPassword().equals(request.getPassword())) {
+		throw new AppException("Incorrect credentials", HttpStatus.BAD_REQUEST);
+	}
+	mservice.sendmail(request.getEmail(), "E Commerce"," "+ "your Account Login successfully");
+	UserDto dto=mapper.map(alreadyExists,UserDto.class);
+	ProfileDto pdto=pservice.getByProfileId(dto.getUserId());
+	dto.setProfileDto(pdto);
+		return dto;
+	}
+
+	@Override
+	public void deleteUserById(Integer userId) {
+	
+		User u=urepo.findById(userId).orElse(null);
+		if(u==null) {
+			throw new AppException("User not Found", HttpStatus.NOT_FOUND);
 		}
-		User u=mapper.map(request, User.class);
-		Profile p=mapper.map(request, Profile.class);
-		RoleDto rdto=rservice.getRoleByRoleName(request.getRoleName());
-		Role r=mapper.map(rdto, Role.class);
-		u.setRole(r);
+		pservice.deleteProfile(userId);
+		urepo.deleteById(userId);
+		mservice.sendmail(u.getEmail(),"E Commerce","your account Deleted successfully");
 		
-		u=urepo.save(u);
-		p.setUser(u);
-		p=pservice.addProfile(p);
-		ProfileDto pdto=mapper.map(p, ProfileDto.class);
+	}
+
+	@Override
+	public UserDto getUserById(Integer userId) {
+		User u=urepo.findById(userId).orElseThrow(()->new AppException("USer Not Found", HttpStatus.NOT_FOUND));
+		
+		ProfileDto pdto=pservice.getByProfileId(userId);
+		
+		RoleDto rdto=rservice.getRoleById(userId);
+		
 		UserDto dto=mapper.map(u, UserDto.class);
 		dto.setProfileDto(pdto);
 		dto.setRoleDto(rdto);
 		return dto;
 	}
 
-	@Override
-	public UserDto login(LoginRequest request) {
-		// TODO Auto-generated method stub
-	User alreadyExists=	urepo.findByEmail(request.getEmail()).orElse(null);
 	
-	if(alreadyExists==null) {
-		throw new AppException("User not found!",HttpStatus.NOT_FOUND );
-	}
 	
-	if(!request.getPassword().equals(alreadyExists.getPassword())) {
-		throw new AppException("Incorrect Password!", HttpStatus.BAD_REQUEST);
-	}
-	
-	UserDto dto=mapper.map(alreadyExists, UserDto.class);
-	ProfileDto pdto=mapper.map(pservice.getProfileByUserId(alreadyExists.getUserId()), ProfileDto.class);
-	dto.setRoleDto(mapper.map(alreadyExists.getRole(),RoleDto.class));
-	
-	dto.setProfileDto(pdto);
-		return dto;
-	}
+	//urepo.findAll() gives you a List of User entities, but your method needs to return a List of UserDto objects.
+	//You cannot directly use .map() on a normal List.
+	//List doesn't have a map() method. So we convert the list into a Stream:A stream allows you to process every element one by one.
+   // map what it does Takes each User object and convert it into a UserDto object.
+//	After map(), you have: Stream<UserDto>
+//	But your method says:		public List<UserDto> getAllUser()
+// So you need to convert the stream back into a List So use .collect(Collectors.toList()) does.
 
 	@Override
-	public UserDto getById(Integer userId) {
-		// TODO Auto-generated method stub
-		User user = urepo.findById(userId).orElse(null);
+	public List<UserDto> getAllUser() {
 
-	    if(user == null) {
-	        throw new AppException("User not found!", HttpStatus.NOT_FOUND);
-	    }
-
-	    UserDto dto = mapper.map(user, UserDto.class);
-
-	    return dto;
-	}
-
-	@Override
-	public List<UserDto> getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateUser(Integer userId, UpdateRequest request) {
+		return urepo.findAll()
+				.stream()
+				.map(u->mapper.map(u, UserDto.class))
+				.collect(Collectors.toList());
 		
-
-	}
-
-	@Override
-	public void deleteById(Integer userId) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

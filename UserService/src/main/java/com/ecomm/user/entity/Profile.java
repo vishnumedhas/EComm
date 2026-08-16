@@ -9,10 +9,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.PastOrPresent;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Profile {
 
 	@Id
@@ -20,10 +28,11 @@ public class Profile {
 	private Integer profileId;
 	private String firstName;
 	private String lastName;
+	private LocalDate dob;
 	@Column(unique=true)
 	private String phone;
-	private LocalDate dob;
-	private String url;
+	private String imageUrl;
+	private String publicUrl;
 	
 	@OneToOne
 	@JoinColumn(name="user_id")

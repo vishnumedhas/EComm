@@ -15,3 +15,4 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(new ApiResponse<>(exception.getMessage(),null,exception.getHttpStatus()),exception.getHttpStatus());
 	}
 }
+

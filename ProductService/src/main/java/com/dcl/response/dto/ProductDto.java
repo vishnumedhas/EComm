@@ -1,0 +1,17 @@
+package com.dcl.response.dto;
+
+import java.time.LocalDateTime;
+
+import lombok.Data;
+
+@Data
+public class ProductDto {
+
+	
+	private Integer productId;
+	private String productName;
+	private Double productPrice;
+	private String description;
+	private LocalDateTime createdAt;
+	
+}

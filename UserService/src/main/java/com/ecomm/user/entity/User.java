@@ -31,9 +31,8 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userId;
 	
-	@Column(unique=true)
+	@Column(unique = true)
 	private String email;
-	
 	private String password;
 	
 	@CreationTimestamp
@@ -47,7 +46,11 @@ public class User {
 		this.updatedAt=LocalDateTime.now();
 	}
 	
-	@OneToOne(mappedBy = "user",cascade=CascadeType.ALL)
+	// cascade = CascadeType.ALL [Operations performed on the User can automatically be propagated to its Profile]
+	// Cascade includes operations such as: PERSIST MERGE REMOVE REFRESH DETACH
+	// ex: save user save profile delete user delete profile update user update profile
+	//If the Profile is removed from the User's relationship, JPA will delete that orphan Profile from the database.
+	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL ,orphanRemoval = true)
 	private Profile profile;
 	
 	@ManyToOne

@@ -2,4 +2,6 @@
 <typeInfoHistroy>
     <typeInfo handle="=UserService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.ecomm.user.service{UserService.java[UserService" modifiers="513" timestamp="1784539903290"/>
     <typeInfo handle="=UserService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.ecomm.user.service{RoleService.java[RoleService" modifiers="513" timestamp="1785482886251"/>
+    <typeInfo handle="=ProductService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.dcl.service{ProductService.java[ProductService" modifiers="513" timestamp="1786615197205"/>
+    <typeInfo handle="=ProductService/C:\/Users\/vishn\/.m2\/repository\/org\/yaml\/snakeyaml\/2.6\/snakeyaml-2.6.jar=/maven.pomderived=/true=/=/maven.groupId=/org.yaml=/=/maven.artifactId=/snakeyaml=/=/maven.version=/2.6=/=/maven.scope=/compile=/=/maven.pomderived=/true=/&lt;org.yaml.snakeyaml.parser(Production.class[Production" modifiers="1536" timestamp="1782797833401"/>
 </typeInfoHistroy>
